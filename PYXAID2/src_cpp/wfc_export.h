@@ -3,4 +3,4 @@
 
 void export_wfc();
 
-#endif // wfc_export_h
+#endif  // wfc_export_h

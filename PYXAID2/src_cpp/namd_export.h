@@ -12,4 +12,4 @@
 
 int export_namd();
 
-#endif // namd_export_H
+#endif  // namd_export_H

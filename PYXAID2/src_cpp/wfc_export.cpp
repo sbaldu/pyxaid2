@@ -12,41 +12,36 @@
 #include <boost/python.hpp>
 using namespace boost::python;
 
+void export_wfc() {
+  class_<wfc>("wfc", init<>())
+      .def(init<wfc&, int, int, wfc&, int, int>())
+      .def_readwrite("nspin", &wfc::nspin)
+      .def_readwrite("gamma_only", &wfc::gamma_only)
+      .def_readwrite("natoms", &wfc::natoms)
+      .def_readwrite("tpiba", &wfc::tpiba)
+      .def_readwrite("alat", &wfc::alat)
+      .def_readwrite("omega", &wfc::omega)
+      .def_readwrite("efermi", &wfc::efermi)
+      .def_readwrite("cell_units", &wfc::cell_units)
+      .def_readwrite("energy_units", &wfc::energy_units)
+      .def_readwrite("nkpts", &wfc::nkpts)
+      .def_readwrite("nbands", &wfc::nbands)
+      .def_readwrite("npw", &wfc::npw)
 
-void export_wfc(){
+      .def("QE_read_binary_wfc", &wfc::QE_read_binary_wfc)
+      .def("QE_read_acsii_wfc", &wfc::QE_read_acsii_wfc)
+      .def("QE_read_acsii_grid", &wfc::QE_read_acsii_grid)
+      .def("QE_read_acsii_index", &wfc::QE_read_acsii_index)
 
-  class_<wfc>("wfc",init<>())
-    .def(init<wfc&,int,int,wfc&,int,int>())
-    .def_readwrite("nspin",&wfc::nspin)
-    .def_readwrite("gamma_only",&wfc::gamma_only)
-    .def_readwrite("natoms",&wfc::natoms)
-    .def_readwrite("tpiba",&wfc::tpiba)
-    .def_readwrite("alat",&wfc::alat)
-    .def_readwrite("omega",&wfc::omega)
-    .def_readwrite("efermi",&wfc::efermi)
-    .def_readwrite("cell_units",&wfc::cell_units)
-    .def_readwrite("energy_units",&wfc::energy_units)
-    .def_readwrite("nkpts",&wfc::nkpts)
-    .def_readwrite("nbands",&wfc::nbands)
-    .def_readwrite("npw",&wfc::npw)
+      .def("complete", &wfc::complete)
+      .def("normalize", &wfc::normalize)
+      .def("restore", &wfc::restore)
+      .def("set_latt_vectors", &wfc::set_latt_vectors)
+      .def("set_reci_vectors", &wfc::set_reci_vectors)
+      .def("compute_Hprime", &wfc::compute_Hprime);
 
-
-    .def("QE_read_binary_wfc",&wfc::QE_read_binary_wfc)
-    .def("QE_read_acsii_wfc",&wfc::QE_read_acsii_wfc)
-    .def("QE_read_acsii_grid",&wfc::QE_read_acsii_grid)
-    .def("QE_read_acsii_index",&wfc::QE_read_acsii_index)
-
-    .def("complete",&wfc::complete)
-    .def("normalize",&wfc::normalize)
-    .def("restore",&wfc::restore)
-    .def("set_latt_vectors",&wfc::set_latt_vectors)
-    .def("set_reci_vectors",&wfc::set_reci_vectors)
-    .def("compute_Hprime",&wfc::compute_Hprime)
-  ;
-
-  def("overlap",&overlap);
-  def("nac",&nac);
-  def("energy",&pw_energy);
-  def("ham",&ham);
-
+  def("overlap", &overlap);
+  def("nac", &nac);
+  def("energy", &pw_energy);
+  def("ham", &ham);
 }

@@ -15,14 +15,21 @@
 #include "ElectronicStructure.h"
 #include "liblibra_core.h"
 
+#include <vector>
+
 using namespace liblibra;
 using namespace liblibra::librandom;
 using namespace liblibra::liblinalg;
 
+void hop(std::vector<double>& sh_prob, int& state, int num_states);
+void run_decoherence_rates(InputStructure& is,
+                           std::vector<ElectronicStructure>& me_es,
+                           std::vector<me_state>& me_states,
+                           int icond);
+void run_namd1(InputStructure& is,
+               std::vector<ElectronicStructure>& me_es,
+               std::vector<me_state>& me_states,
+               int icond,
+               Random& rnd);
 
-void hop(vector<double>& sh_prob,int& state,int num_states);
-void run_decoherence_rates(InputStructure& is, vector<ElectronicStructure>& me_es,vector<me_state>& me_states, int icond);
-void run_namd1(InputStructure& is, vector<ElectronicStructure>& me_es,vector<me_state>& me_states, int icond, Random& rnd);
-
-
-#endif // NAMD_H
+#endif  // NAMD_H

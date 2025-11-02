@@ -14,89 +14,126 @@
 // Here we define a set of functions which are not the members of wfc, but
 // rather take wfc objects as arguments
 
-void overlap(wfc& wfc1,int k1,int minband,int maxband,std::string filename){
-// This function computes the overlap of the wavefunctions at given k-point
-// and writes the overlap matrix in files filename_re and filename_im
-// orbitals are in range [minband,maxband]
-  if(minband<0){ cout<<"Error in nac() : minimal band index is 0, given "<<minband<<endl; exit(0); }
-  if(maxband>=wfc1.nbands){ cout<<"Error in nac() : maximal band index is "<<wfc1.nbands-1<<", given "<<maxband<<endl; exit(0); }
+void overlap(wfc& wfc1, int k1, int minband, int maxband, std::string filename) {
+  // This function computes the overlap of the wavefunctions at given k-point
+  // and writes the overlap matrix in files filename_re and filename_im
+  // orbitals are in range [minband,maxband]
+  if (minband < 0) {
+    cout << "Error in nac() : minimal band index is 0, given " << minband << endl;
+    exit(0);
+  }
+  if (maxband >= wfc1.nbands) {
+    cout << "Error in nac() : maximal band index is " << wfc1.nbands - 1 << ", given " << maxband
+         << endl;
+    exit(0);
+  }
 
-  ofstream f_re((filename+"_re").c_str(),ios::out);
-  ofstream f_im((filename+"_im").c_str(),ios::out);
+  ofstream f_re((filename + "_re").c_str(), ios::out);
+  ofstream f_im((filename + "_im").c_str(), ios::out);
   int sz = wfc1.nbands;
-  
-  for(int i=minband;i<=maxband;i++){
-    for(int j=minband;j<=maxband;j++){
-      complex<double> res = wfc1.kpts[k1].mo[i].conj() * wfc1.kpts[k1].mo[j];   
-      f_re<<res.real()<<"  ";
-      f_im<<res.imag()<<"  ";
-    }// for j
-    f_re<<endl;
-    f_im<<endl;
-  }// for i
+
+  for (int i = minband; i <= maxband; i++) {
+    for (int j = minband; j <= maxband; j++) {
+      complex<double> res = wfc1.kpts[k1].mo[i].conj() * wfc1.kpts[k1].mo[j];
+      f_re << res.real() << "  ";
+      f_im << res.imag() << "  ";
+    }  // for j
+    f_re << endl;
+    f_im << endl;
+  }  // for i
 
   f_re.close();
   f_im.close();
-
 }
 
-void pw_energy(wfc& wfc1,int k,int minband,int maxband,std::string filename){
-// This function prints the orbital energies (eigenvalues) in a range of band
-// indexes [minmband, maxband] for given wavefunctions
-// for given k-point into file filename
-  if(minband<0){ cout<<"Error in energy() : minimal band index is 0, given "<<minband<<endl; exit(0); }
-  if(maxband>=wfc1.nbands){ cout<<"Error in energy() : maximal band index is "<<wfc1.nbands-1<<", given "<<maxband<<endl; exit(0); }
+void pw_energy(wfc& wfc1, int k, int minband, int maxband, std::string filename) {
+  // This function prints the orbital energies (eigenvalues) in a range of band
+  // indexes [minmband, maxband] for given wavefunctions
+  // for given k-point into file filename
+  if (minband < 0) {
+    cout << "Error in energy() : minimal band index is 0, given " << minband << endl;
+    exit(0);
+  }
+  if (maxband >= wfc1.nbands) {
+    cout << "Error in energy() : maximal band index is " << wfc1.nbands - 1 << ", given " << maxband
+         << endl;
+    exit(0);
+  }
 
-  ofstream f(filename.c_str(),ios::out);
-  for(int i=minband;i<=maxband;i++){ f<<wfc1.kpts[k].mo[i].energy<<"  "; }
-  f<<endl;
+  ofstream f(filename.c_str(), ios::out);
+  for (int i = minband; i <= maxband; i++) {
+    f << wfc1.kpts[k].mo[i].energy << "  ";
+  }
+  f << endl;
   f.close();
 }
 
+void nac(wfc& wfc1,
+         wfc& wfc2,
+         int k1,
+         int k2,
+         int minband,
+         int maxband,
+         double dt,
+         std::string filename) {
+  // This function computes the non-adiabatic coupling (nac) of the 2 wavefunctions at k-points
+  // given by indices k1 and k2 (starting from 0)
+  // and writes the nac matrix in files filename_re and filename_im
+  // The range of the orbitals for which NACs are computed is: [minband,maxband]
+  // Here the meaning of wfc1 and wfc2 - is the wavefunction at different time steps
+  // Note that all wavefunction pereparation steps (normalize,complete,restore) are supposed to be already done
 
-void nac(wfc& wfc1,wfc& wfc2,int k1,int k2,int minband,int maxband,double dt,std::string filename){
-// This function computes the non-adiabatic coupling (nac) of the 2 wavefunctions at k-points
-// given by indices k1 and k2 (starting from 0)
-// and writes the nac matrix in files filename_re and filename_im
-// The range of the orbitals for which NACs are computed is: [minband,maxband]
-// Here the meaning of wfc1 and wfc2 - is the wavefunction at different time steps
-// Note that all wavefunction pereparation steps (normalize,complete,restore) are supposed to be already done
+  if (minband < 0) {
+    cout << "Error in nac() : minimal band index is 0, given " << minband << endl;
+    exit(0);
+  }
+  if (maxband >= wfc1.nbands) {
+    cout << "Error in nac() : maximal band index is " << wfc1.nbands - 1 << ", given " << maxband
+         << endl;
+    exit(0);
+  }
 
-  if(minband<0){ cout<<"Error in nac() : minimal band index is 0, given "<<minband<<endl; exit(0); }
-  if(maxband>=wfc1.nbands){ cout<<"Error in nac() : maximal band index is "<<wfc1.nbands-1<<", given "<<maxband<<endl; exit(0); }
+  ofstream f_re((filename + "_re").c_str(), ios::out);
+  ofstream f_im((filename + "_im").c_str(), ios::out);
 
-  ofstream f_re((filename+"_re").c_str(),ios::out);
-  ofstream f_im((filename+"_im").c_str(),ios::out);
-
-  if(wfc1.nbands!=wfc2.nbands){ cout<<"Error in overlap: Wavefunctions have different number of bands\n"; exit(0); }
-  for(int i=minband;i<=maxband;i++){
-    for(int j=minband;j<=maxband;j++){
+  if (wfc1.nbands != wfc2.nbands) {
+    cout << "Error in overlap: Wavefunctions have different number of bands\n";
+    exit(0);
+  }
+  for (int i = minband; i <= maxband; i++) {
+    for (int j = minband; j <= maxband; j++) {
       complex<double> res1 = wfc1.kpts[k1].mo[i].conj() * wfc2.kpts[k2].mo[j];
       complex<double> res2 = wfc2.kpts[k2].mo[i].conj() * wfc1.kpts[k1].mo[j];
-      complex<double> res = (0.5/dt)*(res1 - res2);
- 
-      f_re<<res.real()<<"  ";
-      f_im<<res.imag()<<"  ";
-    }// for j
-    f_re<<endl;
-    f_im<<endl;
-  }// for i
+      complex<double> res = (0.5 / dt) * (res1 - res2);
+
+      f_re << res.real() << "  ";
+      f_im << res.imag() << "  ";
+    }  // for j
+    f_re << endl;
+    f_im << endl;
+  }  // for i
 
   f_re.close();
   f_im.close();
-
 }
 
-void ham(wfc& wfc1,wfc& wfc2,int k1,int k2,int minband,int maxband,double dt,std::string filename){
-// This function computes the Hamiltonian (h) of the 2 wavefunctions at k-points
-// given by indices k1 and k2 (starting from 0)
-// and writes the H matrix in files filename_re and filename_im - real and imaginary parts 
-// The range of the orbitals for which H are computed is: [minband,maxband]
-// Here the meaning of wfc1 and wfc2 - is the wavefunction at different time steps
-// Note that all wavefunction pereparation steps (normalize,complete,restore) are supposed to be already done
-// The non-diagonal elements of the H are the non-adiabatic couplings (with -i*hbar factor), while diagonal elements
-// are the orbital energies (pure real)
-/******************************************************************
+void ham(wfc& wfc1,
+         wfc& wfc2,
+         int k1,
+         int k2,
+         int minband,
+         int maxband,
+         double dt,
+         std::string filename) {
+  // This function computes the Hamiltonian (h) of the 2 wavefunctions at k-points
+  // given by indices k1 and k2 (starting from 0)
+  // and writes the H matrix in files filename_re and filename_im - real and imaginary parts
+  // The range of the orbitals for which H are computed is: [minband,maxband]
+  // Here the meaning of wfc1 and wfc2 - is the wavefunction at different time steps
+  // Note that all wavefunction pereparation steps (normalize,complete,restore) are supposed to be already done
+  // The non-diagonal elements of the H are the non-adiabatic couplings (with -i*hbar factor), while diagonal elements
+  // are the orbital energies (pure real)
+  /******************************************************************
  Below we use formula:
  d_ij(t+dt/2) = (0.5/dt)*(<i(t)|j(t+dt)> - <i(t)|j(t)> + <i(t+dt)|j(t+dt)> - <i(t+dt)|j(t)>) =
  = (0.5/dt)*(<i(t)|j(t+dt)> - <i(t+dt)|j(t)> + <i(t+dt)|j(t+dt)> - <i(t)|j(t)>)
@@ -118,38 +155,49 @@ void ham(wfc& wfc1,wfc& wfc2,int k1,int k2,int minband,int maxband,double dt,std
  H_ij(t+dt/2) = Eii(t+dt/2)*delta_ij - i*hbar*d_ij(t+dt/2)
 ******************************************************************/
 
-  complex<double> ihbar(0.0,-HBAR); // actually minus i*hbar
-  if(wfc1.energy_units=="Ry"||wfc1.energy_units=="Rydberg"){ 
-    cout<<"Hamiltonian is in Rydberg units\n";
+  complex<double> ihbar(0.0, -HBAR);  // actually minus i*hbar
+  if (wfc1.energy_units == "Ry" || wfc1.energy_units == "Rydberg") {
+    cout << "Hamiltonian is in Rydberg units\n";
     ihbar /= Ry_to_eV;
-  } // all in Ry
-  else{  cout<<"Hamiltonian is in eV units\n";  }
+  }  // all in Ry
+  else {
+    cout << "Hamiltonian is in eV units\n";
+  }
 
-  if(minband<0){ cout<<"Error in ham() : minimal band index is 0, given "<<minband<<endl; exit(0); }
-  if(maxband>=wfc1.nbands){ cout<<"Error in ham() : maximal band index is "<<wfc1.nbands-1<<", given "<<maxband<<endl; exit(0); }
+  if (minband < 0) {
+    cout << "Error in ham() : minimal band index is 0, given " << minband << endl;
+    exit(0);
+  }
+  if (maxband >= wfc1.nbands) {
+    cout << "Error in ham() : maximal band index is " << wfc1.nbands - 1 << ", given " << maxband
+         << endl;
+    exit(0);
+  }
 
-  ofstream f_re((filename+"_re").c_str(),ios::out);
-  ofstream f_im((filename+"_im").c_str(),ios::out);
+  ofstream f_re((filename + "_re").c_str(), ios::out);
+  ofstream f_im((filename + "_im").c_str(), ios::out);
 
-  if(wfc1.nbands!=wfc2.nbands){ cout<<"Error in overlap: Wavefunctions have different number of bands\n"; exit(0); }
-  for(int i=minband;i<=maxband;i++){
-    for(int j=minband;j<=maxband;j++){
+  if (wfc1.nbands != wfc2.nbands) {
+    cout << "Error in overlap: Wavefunctions have different number of bands\n";
+    exit(0);
+  }
+  for (int i = minband; i <= maxband; i++) {
+    for (int j = minband; j <= maxband; j++) {
       complex<double> res1 = wfc1.kpts[k1].mo[i].conj() * wfc2.kpts[k2].mo[j];
       complex<double> res2 = wfc2.kpts[k2].mo[i].conj() * wfc1.kpts[k1].mo[j];
-      complex<double> res = ihbar*(0.5/dt)*(res1 - res2);
+      complex<double> res = ihbar * (0.5 / dt) * (res1 - res2);
 
-      if(i==j){ res += 0.5*(wfc1.kpts[k1].mo[i].energy + wfc2.kpts[k2].mo[i].energy); }
+      if (i == j) {
+        res += 0.5 * (wfc1.kpts[k1].mo[i].energy + wfc2.kpts[k2].mo[i].energy);
+      }
 
-      f_re<<res.real()<<"  ";
-      f_im<<res.imag()<<"  ";
-    }// for j
-    f_re<<endl;
-    f_im<<endl;
-  }// for i
+      f_re << res.real() << "  ";
+      f_im << res.imag() << "  ";
+    }  // for j
+    f_re << endl;
+    f_im << endl;
+  }  // for i
 
   f_re.close();
   f_im.close();
 }
-
-
-

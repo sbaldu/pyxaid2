@@ -25,52 +25,51 @@ using namespace std;
 using namespace liblibra;
 using namespace liblibra::libutil;
 
-
-int ext2int(int,vector<int>&);
+int ext2int(int, vector<int>&);
 //int delta(vector<int>& A,vector<int>& B,int& a,int& b);
 
-  
-class me_state{
 // Multi-electron state
 // Basically it is a Slater product
-
+class me_state {
 public:
-  std::string name;          // label of the determinant
+  std::string name;  // label of the determinant
   // Data
-  vector<int> active_space;  // All occupied and virtual orbitals involved in dynamics
-  vector<int> actual_state;  // This is an actual(current) state
+  std::vector<int> active_space;  // All occupied and virtual orbitals involved in dynamics
+  std::vector<int> actual_state;  // This is an actual(current) state
 
-  double Eshift; // this correction goes to Exc and is read directly from input - this is
-                 // to simplify parameter development
-  double Exc;    // correlation correction, to better describe the energy
-                 // of the state with 2 electrons on the same orbital
+  double Eshift;  // this correction goes to Exc and is read directly from input - this is
+                  // to simplify parameter development
+  double Exc;     // correlation correction, to better describe the energy
+                  // of the state with 2 electrons on the same orbital
 
   // NAC scaling constants for different pairs of the states
   // the sizes of the below vectors should be equal and elements be in correspondense
-  vector<int> nac_scl_indx;
-  vector<double> nac_scl;
+  std::vector<int> nac_scl_indx;
+  std::vector<double> nac_scl;
 
+  me_state() = default;
+  me_state(std::vector<int>& as_, std::vector<int>& cs_)
+      : active_space{as_}, actual_state{cs_}, Exc{0.} {}
 
-  // Constructors
-  me_state(){}
-  me_state(vector<int>& as_,vector<int>& cs_){ active_space = as_; actual_state = cs_; Exc = 0.0; }
+  void set_me_state(std::vector<int>& as_, std::vector<int>& cs_) {
+    active_space = as_;
+    actual_state = cs_;
+    Exc = 0.0;
+  }
 
-  // Basically the constructor
-  void set_me_state(vector<int>& as_,vector<int>& cs_){ active_space = as_; actual_state = cs_; Exc = 0.0;}
-  
-  // Destructor
-  ~me_state() { ; ;}
+  ~me_state() = default;
 
-  // Functions
-  int calculate_Exc(vector<int>&, vector<int>&, vector<double>&,vector<int>&, vector<double>&);
+  int calculate_Exc(std::vector<int>&,
+                    std::vector<int>&,
+                    std::vector<double>&,
+                    std::vector<int>&,
+                    std::vector<double>&);
   void show_state();
-
 };
 
+void input_iconds(boost::python::dict params,
+                  int me_numstates,
+                  std::vector<std::vector<int> >& icond);
+void input_states(boost::python::dict params, std::vector<me_state>& states);
 
-void input_iconds(boost::python::dict params,int me_numstates,vector<vector<int> >& icond);
-void input_states(boost::python::dict params,vector<me_state>& states);
-
-
-
-#endif // state_h
+#endif  // state_h
